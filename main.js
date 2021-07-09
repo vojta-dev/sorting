@@ -20,8 +20,13 @@ onclick('startstop', (element) => {
     running = false;
     element.innerText = 'Start';
     promiseResolve();
+    displayStats();
   }
 });
+
+let buttonPresses = 0;
+let lowestNumOfTries = Infinity;
+let highestNumOfTries = 0;
 
 let running = false;
 let refreshRate = 0;
@@ -74,12 +79,23 @@ const bogoSort = async (arr) => {
     await displayArray(array, counter);
   }
 
-  if (running) document.getElementById('array').style.color = 'limegreen';
+  if (running) {
+    document.getElementById('array').style.color = 'limegreen';
+    if (counter > highestNumOfTries) highestNumOfTries = counter;
+    if (counter < lowestNumOfTries) lowestNumOfTries = counter;
+  }
 
   stop();
 };
 
+const displayStats = () => {
+  document.getElementById('lowestNum').innerText = lowestNumOfTries;
+  document.getElementById('highestNum').innerText = highestNumOfTries;
+  document.getElementById('buttonPresses').innerText = buttonPresses;
+};
+
 const start = () => {
+  buttonPresses++;
   const startingArray = [...new Array(startingArrayLength + 1).keys()].slice(1);
   document.getElementById('expectation').innerText = `Expecting around ${startingArray.reduce((a, b) => a * b)} tries`;
   document.getElementById('array').style.color = '';
@@ -92,4 +108,5 @@ const stop = () => {
   document.getElementById('startstop').innerText = 'Start';
   running = false;
   promiseResolve();
+  displayStats();
 };
